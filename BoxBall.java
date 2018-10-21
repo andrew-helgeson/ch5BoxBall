@@ -9,11 +9,9 @@ import java.awt.geom.*;
  *
  * This movement can be initiated by repeated calls to the "move" method.
  * 
- * @author Michael Kölling (mik)
- * @author David J. Barnes
- * @author Bruce Quig
+ * @author Andrew Helgeson
  *
- * @version 2011.07.31
+ * @version 2018.10.21
  */
 
 public class BoxBall
@@ -27,9 +25,13 @@ public class BoxBall
     private int xPosition;
     private int yPosition;
     private final int groundPosition;      // y position of ground
+    private final int leftwallPosition; 
+    private final int rightwallPosition;
+    private int numberBalls;
     private Canvas canvas;
     private int ySpeed = 1;                // initial downward speed
-
+    private int xSpeed = 3;
+    
     /**
      * Constructor for objects of class BoxBall
      *
@@ -37,17 +39,20 @@ public class BoxBall
      * @param yPos  the vertical coordinate of the ball
      * @param ballDiameter  the diameter (in pixels) of the ball
      * @param ballColor  the color of the ball
-     * @param groundPos  the position of the ground (where the wall will bounce)
+     * @param groundPos  the position of the ground (where the ball will bounce)
      * @param drawingCanvas  the canvas to draw this ball on
      */
-    public BoxBall(int xPos, int yPos, int ballDiameter, Color ballColor,
-                        int groundPos, Canvas drawingCanvas)
+    public BoxBall(int xPos, int yPos, int ballDiameter, Color ballColor, int numBalls,
+                        int groundPos, int leftwallPos, int rightwallPos, Canvas drawingCanvas)
     {
         xPosition = xPos;
         yPosition = yPos;
         color = ballColor;
         diameter = ballDiameter;
         groundPosition = groundPos;
+        leftwallPosition = leftwallPos;
+        rightwallPosition = rightwallPos;
+        numberBalls = numBalls;
         canvas = drawingCanvas;
     }
 
@@ -79,13 +84,22 @@ public class BoxBall
         // compute new position
         ySpeed += GRAVITY;
         yPosition += ySpeed;
-        xPosition +=2;
+        xPosition += xSpeed;
 
         // check if it has hit the ground
         if(yPosition >= (groundPosition - diameter) && ySpeed > 0) {
             yPosition = (int)(groundPosition - diameter);
             ySpeed = -ySpeed + ballDegradation; 
         }
+        // check if ball has hit the right wall
+        if(xPosition >= (rightwallPosition - diameter) && xSpeed > 0) {
+            xSpeed = -xSpeed; 
+        }
+        // check if ball has hit the left wall
+        if(xPosition <= (leftwallPosition + diameter) && xSpeed < 0) {
+            xSpeed = -xSpeed;
+        }
+        
 
         // draw again at new position
         draw();

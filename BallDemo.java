@@ -53,4 +53,39 @@ public class BallDemo
             }
         }
     }
-}
+    
+    public void boxBounce()
+    {
+        int ground = 400; // position of the ground line
+        int ceiling = 50; // position of the ceiling line
+
+        myCanvas.setVisible(true);
+
+        // draw the ground
+        myCanvas.drawLine(50, ground, 550, ground);
+        // draw the left wall
+        myCanvas.drawLine(50, ceiling, 50, ground);
+        // draw the right wall
+        myCanvas.drawLine(550, ceiling, 550, ground);
+        // draw the ceiling
+        myCanvas.drawLine(50, ceiling, 550, ceiling);
+
+        // crate and show the balls
+        BoxBall ball = new BoxBall(100, 120, 16, Color.BLUE, 2, ground, 50, 550, myCanvas);
+        ball.draw();
+        BoxBall ball2 = new BoxBall(70, 150, 20, Color.RED, 2, ground, 50, 550, myCanvas);
+        ball2.draw();
+
+
+        boolean finished2 =  false;
+        while(!finished2) {
+            myCanvas.wait(50);           // small delay
+            ball.move();
+            ball2.move();
+            // stop once ball has travelled a certain distance on x axis
+            if(ball.getXPosition() >= 650 || ball2.getXPosition() >= 650) {
+                finished2 = true;
+            }
+        }
+        }
+    }
