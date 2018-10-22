@@ -1,5 +1,6 @@
 import java.awt.*;
 import java.awt.geom.*;
+import java.util.Random;
 
 /**
  * Class BoxBall - a graphical ball that observes the effect of gravity. The ball
@@ -27,10 +28,13 @@ public class BoxBall
     private final int groundPosition;      // y position of ground
     private final int leftwallPosition; 
     private final int rightwallPosition;
+    private final int ceilingPosition;
     private int numberBalls;
     private Canvas canvas;
-    private int ySpeed = 1;                // initial downward speed
-    private int xSpeed = 3;
+    private int ySpeed;               // initial downward speed
+    private int xSpeed;
+    private Random randXSpeed;
+    private Random randYSpeed;
     
     /**
      * Constructor for objects of class BoxBall
@@ -42,7 +46,7 @@ public class BoxBall
      * @param groundPos  the position of the ground (where the ball will bounce)
      * @param drawingCanvas  the canvas to draw this ball on
      */
-    public BoxBall(int xPos, int yPos, int ballDiameter, Color ballColor, int numBalls,
+    public BoxBall(int xPos, int yPos, int ballDiameter, Color ballColor, int ceilingPos,
                         int groundPos, int leftwallPos, int rightwallPos, Canvas drawingCanvas)
     {
         xPosition = xPos;
@@ -50,10 +54,21 @@ public class BoxBall
         color = ballColor;
         diameter = ballDiameter;
         groundPosition = groundPos;
+        ceilingPosition = ceilingPos;
         leftwallPosition = leftwallPos;
         rightwallPosition = rightwallPos;
-        numberBalls = numBalls;
         canvas = drawingCanvas;
+        randXSpeed = new Random();
+        randYSpeed = new Random();
+        xSpeed = randXSpeed.nextInt(14) - 7;
+        ySpeed = randYSpeed.nextInt(14) - 7;
+        if (xSpeed == 0){
+            xSpeed = 1;
+        }
+        
+        if (ySpeed == 0){
+            ySpeed = 1;
+        }
     }
 
     /**
@@ -80,23 +95,31 @@ public class BoxBall
     {
         // remove from canvas at the current position
         erase();
+        
+        
             
         // compute new position
-        ySpeed += GRAVITY;
         yPosition += ySpeed;
         xPosition += xSpeed;
 
         // check if it has hit the ground
         if(yPosition >= (groundPosition - diameter) && ySpeed > 0) {
             yPosition = (int)(groundPosition - diameter);
-            ySpeed = -ySpeed + ballDegradation; 
+            ySpeed = -ySpeed; 
+        }
+        
+        if(yPosition <= (ceilingPosition) && ySpeed < 0) {
+            yPosition = (int)(ceilingPosition);
+            ySpeed = -ySpeed; 
         }
         // check if ball has hit the right wall
         if(xPosition >= (rightwallPosition - diameter) && xSpeed > 0) {
-            xSpeed = -xSpeed; 
+            xPosition = (int)(rightwallPosition - diameter);
+            xSpeed = -xSpeed;
         }
         // check if ball has hit the left wall
-        if(xPosition <= (leftwallPosition + diameter) && xSpeed < 0) {
+        if(xPosition <= (leftwallPosition + 1) && xSpeed < 0) {
+            xPosition = (int)(leftwallPosition + 1);
             xSpeed = -xSpeed;
         }
         
